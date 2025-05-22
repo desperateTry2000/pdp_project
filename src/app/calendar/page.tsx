@@ -1,28 +1,48 @@
-// src/app/calendar/page.tsx
-'use client';
+// // src/app/calendar/page.tsx
+// 'use client';
 
-import Calendar from '@/components/BaseCalendar/Calendar';
-import JournalingDrawer from '@/components/JournalingDrawer/JournalingDrawer';
-import { useState } from 'react';
+// import Calendar from '@/components/BaseCalendar/Calendar';
+// import JournalingDrawer from '@/components/JournalingDrawer/JournalingDrawer';
+// import { useState } from 'react';
+// import { styled } from '@stitches/react';
 
-export default function CalendarPage() {
-  const [isOpen, setIsOpen] = useState(false);
+// const PageContainer = styled('div', {
+//   display: 'flex',
+//   height: '100vh',
+// });
 
-  return (
-    <div className="flex h-screen">
-      {/* Calendar pane: shrinks when drawer opens */}
-      <div
-        className={`transition-all duration-300 ease-in-out
-          ${isOpen ? 'w-7/12' : 'w-full'}`}
-      >
-        <Calendar />
-      </div>
+// const CalendarPane = styled('div', {
+//   transition: 'width 0.3s ease-in-out',
+//   width: '100%',
+//   variants: {
+//     open: {
+//       true: { width: '58.333333%' },
+//       false: { width: '100%' },
+//     },
+//   },
+// });
 
-      {/* Drawer pane */}
-      <JournalingDrawer
-        open={isOpen}
-        onOpenChange={(open) => setIsOpen(open)}
-      />
-    </div>
-  );
-}
+// export default function CalendarPage() {
+//   const [isOpen, setIsOpen] = useState(false);
+
+//   return (
+//     <PageContainer>
+//       <CalendarPane open={isOpen}>
+//         <Calendar
+//           onDateClick={(dateStr) => {
+//             // whenever you click a date, open the drawer
+//             setIsOpen(true);
+//             // if you want, you can also store `dateStr` in state
+//             // to pass down into JournalingDrawer as the selected date
+//           }}
+//         />
+//       </CalendarPane>
+
+//       <JournalingDrawer
+//         open={isOpen}
+//         // Sheet will call this with the new boolean
+//         onOpenChange={(open) => setIsOpen(open)}
+//       />
+//     </PageContainer>
+//   );
+// }
