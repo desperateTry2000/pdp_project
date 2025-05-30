@@ -6,7 +6,9 @@ import { useEffect } from 'react';
 interface CustomDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  selectedDate: string | null;
 }
+
 
 // Slide animation
 const slideIn = keyframes({
@@ -66,7 +68,7 @@ const TextArea = styled('textarea', {
   marginTop: '1rem',
 });
 
-export default function CustomDrawer({ open, onOpenChange }: CustomDrawerProps) {
+export default function CustomDrawer({ open, onOpenChange, selectedDate }: CustomDrawerProps) {
   // Close on ESC
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -84,7 +86,7 @@ export default function CustomDrawer({ open, onOpenChange }: CustomDrawerProps) 
       <DrawerPanel>
         <CloseButton onClick={() => onOpenChange(false)}>✕</CloseButton>
         <h2>Journal Entry</h2>
-        <p>Write down your thoughts for {new Date().toLocaleDateString()}.</p>
+        <p>Write down your thoughts for {selectedDate ?? 'the selected day'}.</p>
         <TextArea placeholder="Start writing..." />
       </DrawerPanel>
     </>
