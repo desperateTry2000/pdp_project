@@ -1,7 +1,8 @@
 'use client';
 
-import { styled, keyframes } from '@stitches/react';
+import { AnimatePresence } from 'framer-motion'
 import { useEffect } from 'react';
+import { DateLabel, SaveButton, TextArea, Heading, CloseButton, MotionDrawerPanel, MotionBackdrop} from './styles';
 
 interface CustomDrawerProps {
   open: boolean;
@@ -10,66 +11,11 @@ interface CustomDrawerProps {
 }
 
 
-// Slide animation
-const slideIn = keyframes({
-  from: { transform: 'translateX(100%)' },
-  to: { transform: 'translateX(0)' },
-});
-
-const fadeIn = keyframes({
-  from: { opacity: 0 },
-  to: { opacity: 1 },
-});
-
-// Backdrop
-const Backdrop = styled('div', {
-  position: 'fixed',
-  inset: 0,
-  backgroundColor: 'rgba(0, 0, 0, 0.4)',
-  zIndex: 40,
-  animation: `${fadeIn} 0.3s ease`,
-});
-
-// Drawer panel
-const DrawerPanel = styled('div', {
-  position: 'fixed',
-  top: 0,
-  right: 0,
-  height: '100%',
-  width: '100%',
-  maxWidth: '540px',
-  backgroundColor: 'white',
-  padding: '1.5rem',
-  zIndex: 50,
-  boxShadow: '-2px 0 10px rgba(0,0,0,0.2)',
-  animation: `${slideIn} 0.3s ease`,
-  display: 'flex',
-  flexDirection: 'column',
-});
-
-// Close button
-const CloseButton = styled('button', {
-  alignSelf: 'flex-end',
-  background: 'transparent',
-  border: 'none',
-  fontSize: '1.25rem',
-  color: '#4b5563',
-  cursor: 'pointer',
-});
-
-// Textarea
-const TextArea = styled('textarea', {
-  width: '100%',
-  minHeight: '200px',
-  border: '1px solid #ccc',
-  borderRadius: '6px',
-  padding: '0.75rem',
-  fontSize: '1rem',
-  marginTop: '1rem',
-});
-
-export default function CustomDrawer({ open, onOpenChange, selectedDate }: CustomDrawerProps) {
-  // Close on ESC
+export default function CustomDrawer({
+  open,
+  onOpenChange,
+  selectedDate,
+}: CustomDrawerProps) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onOpenChange(false);
@@ -81,14 +27,35 @@ export default function CustomDrawer({ open, onOpenChange, selectedDate }: Custo
   if (!open) return null;
 
   return (
-    <>
-      <Backdrop onClick={() => onOpenChange(false)} />
-      <DrawerPanel>
-        <CloseButton onClick={() => onOpenChange(false)}>✕</CloseButton>
-        <h2>Journal Entry</h2>
-        <p>Write down your thoughts for {selectedDate ?? 'the selected day'}.</p>
-        <TextArea placeholder="Start writing..." />
-      </DrawerPanel>
-    </>
+    <AnimatePresence>
+      {open && (
+        <>
+          <MotionBackdrop
+            key="backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => onOpenChange(false)}
+          />
+
+          <MotionDrawerPanel
+            key="drawer"
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'tween', duration: 0.3 }}
+          >
+            <CloseButton onClick={() => onOpenChange(false)}>✕</CloseButton>
+            <Heading>Journal Entry</Heading>
+            <DateLabel>
+              {selectedDate ? `For ${selectedDate}` : 'No date selected'}
+            </DateLabel>
+            <TextArea placeholder="How are you feeling today?" />
+            <SaveButton onClick={() => onOpenChange(false)}>Save</SaveButton>
+          </MotionDrawerPanel>
+        </>
+      )}
+    </AnimatePresence>
   );
 }
