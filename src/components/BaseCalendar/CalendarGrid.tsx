@@ -3,7 +3,7 @@ import { getDaysInMonthGrid } from './utils';
 import { CalendarGridProps } from './CalendarTypes'
 
 export default function CalendarGrid({ currentDate, onDateClick }: CalendarGridProps) {
-  const days = getDaysInMonthGrid(currentDate); // includes prev/next month padding
+  const days = getDaysInMonthGrid(currentDate);
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }}>
