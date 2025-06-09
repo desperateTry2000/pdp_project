@@ -1,0 +1,49 @@
+.heroSection {
+  background: linear-gradient(135deg, #7e5bef 0%, #0fbaf6 100%);
+}
+.heroTitle {
+  font-size: 3rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 1rem;
+}
+.heroSubtitle {
+  font-size: 1.25rem;
+  color: white;
+  margin-bottom: 2rem;
+}
+.ctaButton {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: white;
+  color: #4f46e5;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  text-decoration: none;
+}
+.featureCard {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.featureCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 25px rgba(0,0,0,0.15);
+}
+.statsSection {
+  background-color: #f9fafb;
+  padding: 4rem 0;
+  text-align: center;
+}
+.statsCount {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #4f46e5;
+}
+.statsText {
+  font-size: 1.125rem;
+  color: #4b5563;
+}
