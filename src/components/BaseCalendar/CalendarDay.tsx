@@ -1,23 +1,28 @@
+import { CalendarDay as StyledDay } from './styles';
 import { Dayjs } from 'dayjs';
-
+import { motion } from 'framer-motion'
 interface CalendarDayProps {
   date: Dayjs;
   isCurrentMonth: boolean;
+  isSelected?: boolean;
   onClick: () => void;
 }
 
-export default function CalendarDay({ date, isCurrentMonth, onClick }: CalendarDayProps) {
+export default function CalendarDay({
+  date,
+  isCurrentMonth,
+  isSelected = false,
+  onClick,
+}: CalendarDayProps) {
   return (
-    <div
+    <StyledDay
+      isCurrentMonth={isCurrentMonth}
+      isSelected={isSelected}
       onClick={onClick}
-      style={{
-        padding: '1rem',
-        background: isCurrentMonth ? 'white' : '#f3f4f6',
-        cursor: 'pointer',
-        border: '1px solid #e5e7eb',
-      }}
     >
       {date.date()}
-    </div>
+    </StyledDay>
   );
 }
+
+export const MotionCalendarDay = motion(CalendarDay);

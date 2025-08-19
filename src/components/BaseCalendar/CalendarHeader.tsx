@@ -1,11 +1,12 @@
 import { CalendarHeaderProps } from "./CalendarTypes";
+import { Title, HeaderContainer, NavButton } from './styles'
 
 export default function CalendarHeader({ currentDate, onChange }: CalendarHeaderProps) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-      <button onClick={() => onChange(currentDate.subtract(1, 'month'))}>←</button>
-      <h2>{currentDate.format('MMMM YYYY')}</h2>
-      <button onClick={() => onChange(currentDate.add(1, 'month'))}>→</button>
-    </div>
+    <HeaderContainer style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <NavButton onClick={() => onChange(currentDate.subtract(1, 'month'))}>←</NavButton>
+      <Title>{currentDate.format('MMMM YYYY')}</Title>
+      <NavButton onClick={() => onChange(currentDate.add(1, 'month'))}>→</NavButton>
+    </HeaderContainer>
   );
 }

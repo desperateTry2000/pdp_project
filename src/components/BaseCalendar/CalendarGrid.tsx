@@ -1,23 +1,36 @@
-import CalendarDay from './CalendarDay';
+import { StyledCalendarGrid, DayHeader, CalendarDay } from './styles';
 import { getDaysInMonthGrid } from './utils';
-import { CalendarGridProps } from './CalendarTypes'
+import { CalendarGridProps } from './CalendarTypes';
 
-export default function CalendarGrid({ currentDate, onDateClick }: CalendarGridProps) {
+export default function CalendarGrid({
+  currentDate,
+  onDateClick,
+  selectedDate,
+  entriesMap
+}: CalendarGridProps & { selectedDate?: string }) {
   const days = getDaysInMonthGrid(currentDate);
+  const headers = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }}>
-      {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
-        <div key={d} style={{ fontWeight: 'bold' }}>{d}</div>
-      ))}
-      {days.map((day) => (
-        <CalendarDay
-          key={day.format('YYYY-MM-DD')}
-          date={day}
-          isCurrentMonth={day.month() === currentDate.month()}
-          onClick={() => onDateClick(day.format('YYYY-MM-DD'))}
-        />
-      ))}
-    </div>
+    <StyledCalendarGrid>
+      {headers.map(h => <DayHeader key={h}>{h}</DayHeader>)}
+
+      {days.map(day => {
+        const dateStr = day.format('YYYY-MM-DD');
+        const isAlarming = entriesMap[dateStr] ?? false;
+
+        return (
+          <CalendarDay
+            key={dateStr}
+            isCurrentMonth={day.month() === currentDate.month()}
+            isSelected={dateStr === selectedDate}
+            isAlarming={isAlarming}
+            onClick={() => onDateClick(dateStr)}
+          >
+            {day.date()}
+          </CalendarDay>
+        );
+      })}
+    </StyledCalendarGrid>
   );
 }

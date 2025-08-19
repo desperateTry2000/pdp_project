@@ -1,4 +1,4 @@
-import { styled } from "@/styles/stithces.config"
+import { styled } from "@/styles/stitches.config"
 import { motion } from "framer-motion";
 
 export const MotionBackdrop = motion(styled('div', {

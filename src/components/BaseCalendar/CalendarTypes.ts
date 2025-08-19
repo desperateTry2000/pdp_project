@@ -7,4 +7,4 @@ export interface CalendarHeaderProps {
 export interface CalendarGridProps {
   currentDate: Dayjs;
   onDateClick: (dateStr: string) => void;
-}
+  entriesMap: Record<string, boolean>;}
