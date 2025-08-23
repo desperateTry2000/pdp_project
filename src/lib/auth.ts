@@ -26,6 +26,7 @@ declare module 'next-auth/jwt' {
 const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
@@ -39,26 +40,49 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
        async authorize(credentials) {
-        const email = credentials?.email;
-        const password = credentials?.password;
-        if (!email || !password) return null;
+        try {
+          const email = credentials?.email;
+          const password = credentials?.password;
+          
+          if (!email || !password) {
+            console.log('Missing credentials');
+            return null;
+          }
 
-        const user = await prisma.user.findUnique({ where: { email } });
-        if (!user || !user.passwordHash) return null;
+          console.log('Attempting to find user with email:', email);
+          
+          const user = await prisma.user.findUnique({ where: { email } });
+          
+          if (!user) {
+            console.log('User not found');
+            return null;
+          }
+          
+          // Check if this is an OAuth-only user (no password)
+          if (!user.passwordHash) {
+            console.log('User found but no password hash - OAuth user trying to use credentials');
+            return null;
+          }
 
-        const hash = user.passwordHash;
-        const isValid = await compare(password, hash);
-        if (!isValid) return null;
+          console.log('Comparing passwords...');
+          const isValid = await compare(password, user.passwordHash);
+          
+          if (!isValid) {
+            console.log('Password invalid');
+            return null;
+          }
 
-        return user;
+          console.log('Authentication successful for user:', user.id);
+          return user;
+        } catch (error) {
+          console.error('Error in authorize function:', error);
+          throw error; // This will cause the 500 error, but we'll see the actual error in logs
+        }
       },
     }),
   ],
   session: {
     strategy: 'jwt',
-  },
-  jwt: {
-    secret: process.env.NEXTAUTH_JWT_SECRET!,
   },
   callbacks: {
     async jwt({ token, user, account }): Promise<JWT> {

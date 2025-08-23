@@ -1,85 +1,118 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { signIn, useSession } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { FcGoogle } from 'react-icons/fc';
-import { Container, Card, Title, ErrorMessage, OAuthButton, DividerWrapper, DividerLine, DividerText, Form, InputGroup, Label, Input, SubmitButton, SignupText, SignupLink } from './styles';
 
-export default function SignInPage() {
-  const { data: session } = useSession();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/';
+import { signIn } from 'next-auth/react';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+
+export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    if (session) {
-      router.replace(callbackUrl);
-    }
-  }, [session, callbackUrl, router]);
-
-  const handleGoogleSignIn = () => {
-    signIn('google', { callbackUrl });
-  };
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     setError('');
-    const result = await signIn('credentials', {
-      redirect: false,
-      email,
-      password,
-    });
-    if (result?.error) {
-      setError('Invalid email or password');
-    } else {
-      router.replace(callbackUrl);
+
+    try {
+      const healthCheck = await fetch('/api/health');
+      if (!healthCheck.ok) {
+        setError('Database connection failed. Please try again later.');
+        return;
+      }
+
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError('Invalid credentials');
+      } else {
+        router.push('/calendar');
+      }
+    } catch (error) {
+      console.error('Signin error:', error);
+      setError('An error occurred during signin. Please check the console for details.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const handleGoogleSignIn = () => {
+    signIn('google', { callbackUrl: '/calendar' });
+  };
+
   return (
-    <Container>
-      <Card>
-        <Title>Sign in to your account</Title>
-        {error && <ErrorMessage>{error}</ErrorMessage>}
-        <OAuthButton onClick={handleGoogleSignIn}>
-          <FcGoogle style={{ marginRight: '8px' }} size={20} />
-          Sign in with Google
-        </OAuthButton>
-        <DividerWrapper>
-          <DividerLine />
-          <DividerText>or</DividerText>
-        </DividerWrapper>
-        <Form onSubmit={handleSubmit}>
-          <InputGroup>
-            <Label htmlFor="email">Email address</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </InputGroup>
-          <InputGroup>
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </InputGroup>
-          <SubmitButton type="submit">Sign in</SubmitButton>
-        </Form>
-        <SignupText>
-          Don&apos;t have an account?{' '}
-          <SignupLink href="/auth/signup">Sign up</SignupLink>
-        </SignupText>
-      </Card>
-    </Container>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Sign in to your account
+          </h2>
+        </div>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <input
+                type="email"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div>
+              <input
+                type="password"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {error && (
+            <div className="text-red-600 text-sm text-center">{error}</div>
+          )}
+
+          <div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+            >
+              {isLoading ? 'Signing in...' : 'Sign in'}
+            </button>
+          </div>
+
+          <div className="mt-6">
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+            >
+              Sign in with Google
+            </button>
+          </div>
+
+          <div className="text-center">
+            <p className="text-sm text-gray-600">
+              Don&apos;t have an account?{' '}
+              <Link href="/auth/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
+                Sign up here
+              </Link>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }

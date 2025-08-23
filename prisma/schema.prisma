@@ -9,15 +9,19 @@ datasource db {
 }
 
 model User {
-       id             String    @id @default(cuid())
-       name           String?
-       email          String?   @unique
-       emailVerified  DateTime?
-       image          String?
-       passwordHash   String?
-       accounts       Account[]
-       sessions       Session[]
-     }
+  id             String    @id @default(cuid())
+  name           String    @default("") // Default for existing users
+  email          String    @unique // Required for auth
+  emailVerified  DateTime?
+  image          String?
+  passwordHash   String?   // Optional: null for OAuth users, required for credentials users
+  accounts       Account[]
+  sessions       Session[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([email])
+}
 
      model Account {
        id                 String  @id @default(cuid())
@@ -36,6 +40,7 @@ model User {
        user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
        @@unique([provider, providerAccountId])
+       @@index([userId])
      }
 
      model Session {
@@ -45,6 +50,8 @@ model User {
        expires      DateTime
 
        user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+       @@index([userId])
      }
 
      model VerificationToken {
