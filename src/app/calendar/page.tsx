@@ -1,48 +1,30 @@
 // src/app/calendar/page.tsx
 'use client';
 
-import Calendar from '@/components/BaseCalendar/Calendar';
-import JournalingDrawer from '@/components/JournalingDrawer/JournalingDrawer';
 import { useState } from 'react';
-import { styled } from '@stitches/react';
-
-const PageContainer = styled('div', {
-  display: 'flex',
-  height: '100vh',
-});
-
-const CalendarPane = styled('div', {
-  transition: 'width 0.3s ease-in-out',
-  width: '100%',
-  variants: {
-    open: {
-      true: { width: '58.333333%' },
-      false: { width: '100%' },
-    },
-  },
-});
+import BaseCalendar from '@/components/BaseCalendar/Calendar';
+import JournalingDrawer from '@/components/JournalingDrawer/JournalingDrawer';
 
 export default function CalendarPage() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<string>('');
 
+  const handleDateSelect = (date: string) => {
+    setSelectedDate(date);
+    setIsDrawerOpen(true);
+  };
 
   return (
-    <PageContainer>
-      <CalendarPane open={isOpen}>
-        <Calendar
-          onDateClick={(dateStr) => {
-            setSelectedDate(dateStr);
-            setIsOpen(true);
-          }}
+    <div className="min-h-screen bg-gray-50 p-4">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">Calendar</h1>
+        <BaseCalendar onDateClick={handleDateSelect} />
+        <JournalingDrawer 
+          isOpen={isDrawerOpen} 
+          onClose={() => setIsDrawerOpen(false)} 
+          selectedDate={selectedDate} 
         />
-      </CalendarPane>
-
-      <JournalingDrawer
-        open={isOpen}
-        onOpenChange={(open) => setIsOpen(open)}
-        selectedDate={selectedDate}
-      />
-    </PageContainer>
+      </div>
+    </div>
   );
 }
