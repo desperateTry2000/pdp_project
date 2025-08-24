@@ -1,7 +1,7 @@
 'use client'
 import { Geist, Geist_Mono } from "next/font/google";
 import { SessionProvider } from 'next-auth/react';
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import ThemeToggle from '@/components/ui/ThemeToggle';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -25,7 +25,6 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <SessionProvider refetchOnWindowFocus={false}>
-          {/* Theme Toggle - Fixed Position */}
           <div className="fixed top-4 right-4 z-50">
             <ThemeToggle />
           </div>
