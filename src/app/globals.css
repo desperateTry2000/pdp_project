@@ -1,55 +1,168 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
-/* Custom base styles */
 @layer base {
   html {
     scroll-behavior: smooth;
   }
   
   body {
-    @apply antialiased text-gray-900 bg-white;
+    font-family: inherit;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: rgb(17 24 39);
+    background-color: rgb(255 255 255);
+    transition-property: color, background-color;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
   }
   
-  /* Custom scrollbar */
+  .dark body {
+    color: rgb(95 87 78);
+    background-color: rgb(111 101 87);
+  }
+  
   ::-webkit-scrollbar {
-    @apply w-2;
+    width: 0.5rem;
   }
   
   ::-webkit-scrollbar-track {
-    @apply bg-gray-100;
+    background-color: rgb(243 244 246);
+  }
+  
+  .dark ::-webkit-scrollbar-track {
+    background-color: rgb(138 127 111);
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 rounded-full;
+    background-color: rgb(209 213 219);
+    border-radius: 9999px;
+  }
+  
+  .dark ::-webkit-scrollbar-thumb {
+    background-color: rgb(168 159 145);
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400;
+    background-color: rgb(156 163 175);
+  }
+  
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(200 192 181);
   }
 }
 
-/* Custom component styles */
 @layer components {
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+    background-image: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 50%, #7dd3fc 100%);
+    color: rgb(255 255 255);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+  }
+  
+  .btn-primary:hover {
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+    transform: scale(1.05);
+  }
+  
+  .btn-primary:focus {
+    outline: 2px solid rgb(56 189 248);
+    outline-offset: 2px;
   }
   
   .btn-secondary {
-    @apply bg-secondary-100 hover:bg-secondary-200 text-secondary-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2;
+    background-image: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
+    color: rgb(2 132 199);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+  }
+  
+  .btn-secondary:hover {
+    background-color: rgb(186 230 253);
+    transform: scale(1.05);
+  }
+  
+  .btn-secondary:focus {
+    outline: 2px solid rgb(56 189 248);
+    outline-offset: 2px;
+  }
+  
+  .dark .btn-secondary {
+    background-color: rgb(138 127 111);
+    color: rgb(186 230 253);
+  }
+  
+  .dark .btn-secondary:hover {
+    background-color: rgb(168 159 145);
   }
   
   .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgb(209 213 219);
+    border-radius: 0.5rem;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+    background-color: rgb(255 255 255);
+    color: rgb(17 24 39);
+  }
+  
+  .input-field:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    border-color: transparent;
+    box-shadow: 0 0 0 2px rgb(56 189 248);
+  }
+  
+  .dark .input-field {
+    border-color: rgb(168 159 145);
+    background-color: rgb(138 127 111);
+    color: rgb(95 87 78);
+  }
+  
+  .dark .input-field::placeholder {
+    color: rgb(200 192 181);
   }
   
   .card {
-    @apply bg-white rounded-xl shadow-soft border border-gray-200;
+    background-color: rgb(255 255 255);
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgb(229 231 235);
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+  }
+  
+  .card:hover {
+    box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  .dark .card {
+    background-color: rgb(138 127 111);
+    box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border-color: rgb(168 159 145);
+  }
+  
+  .dark .card:hover {
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.15), 0 2px 10px -2px rgba(0, 0, 0, 0.05);
   }
 }
 
-/* Custom utility styles */
 @layer utilities {
   .text-balance {
     text-wrap: balance;

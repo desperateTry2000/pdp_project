@@ -1,4 +1,3 @@
-// src/app/calendar/page.tsx
 'use client';
 
 import { useState } from 'react';
@@ -15,9 +14,11 @@ export default function CalendarPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-100 dark:from-dark-800 dark:via-dark-700 dark:to-dark-600 p-4 transition-all duration-500">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Calendar</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-dark-100 mb-8 bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent">
+          Calendar
+        </h1>
         <BaseCalendar onDateClick={handleDateSelect} />
         <JournalingDrawer 
           isOpen={isDrawerOpen} 
