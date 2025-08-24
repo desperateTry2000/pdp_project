@@ -1,59 +1,51 @@
 'use client';
 
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import {
-  DateLabel,
-  SaveButton,
-  TextArea,
-  Heading,
-  CloseButton,
-  MotionDrawerPanel,
-  MotionBackdrop
-} from './styles';
+import { Button } from '@/components/ui/Button';
 
-interface CustomDrawerProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  selectedDate: string | null;
+interface JournalingDrawerProps {
+  isOpen: boolean;
+  onClose: () => void;
+  selectedDate: string;
 }
 
-export default function CustomDrawer({
-  open,
-  onOpenChange,
+export default function JournalingDrawer({
+  isOpen,
+  onClose,
   selectedDate,
-}: CustomDrawerProps) {
-  // 1) missing state hooks
+}: JournalingDrawerProps) {
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isAlarming, setIsAlarming] = useState(false)
+  const [isAlarming, setIsAlarming] = useState(false);
 
-   useEffect(() => {
+  useEffect(() => {
     const timeout = setTimeout(async () => {
-      if (!content.trim()) return setIsAlarming(false)
+      if (!content.trim()) return setIsAlarming(false);
       try {
         const res = await fetch('/api/analyze', {
           method: 'POST',
-          headers: {'Content-Type':'application/json'},
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ content }),
-        })
-        const { isAlarming } = await res.json()
-        setIsAlarming(isAlarming)
+        });
+        const { isAlarming } = await res.json();
+        setIsAlarming(isAlarming);
       } catch {
+        // Handle error silently
       }
-    }, 500)
+    }, 500);
 
-    return () => clearTimeout(timeout)
-  }, [content])
+    return () => clearTimeout(timeout);
+  }, [content]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onOpenChange(false);
+      if (e.key === 'Escape') onClose();
     };
-    if (open) window.addEventListener('keydown', handleKeyDown);
+    if (isOpen) window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [open, onOpenChange]);
+  }, [isOpen, onClose]);
 
   const handleSave = async () => {
     if (!selectedDate || content.trim() === '') return;
@@ -71,7 +63,7 @@ export default function CustomDrawer({
         const err = await res.json();
         setError(err.error || 'Unknown error');
       } else {
-        onOpenChange(false);
+        onClose();
         setContent('');
       }
     } catch (e) {
@@ -84,58 +76,72 @@ export default function CustomDrawer({
 
   return (
     <AnimatePresence>
-      {open && (
+      {isOpen && (
         <>
-          <MotionBackdrop
+          <motion.div
             key="backdrop"
+            className="fixed inset-0 bg-black/40 z-40"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            onClick={() => onOpenChange(false)}
+            onClick={onClose}
           />
-          <MotionDrawerPanel
+          <motion.div
             key="drawer"
+            className="fixed top-0 right-0 h-full w-full max-w-[540px] bg-white text-gray-900 p-4 z-50 shadow-[-2px_0_12px_rgba(0,0,0,0.1)] flex flex-col rounded-tl-lg rounded-bl-lg"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'tween', duration: 0.3 }}
           >
-            <CloseButton onClick={() => onOpenChange(false)}>✕</CloseButton>
-            <Heading>Journal Entry</Heading>
-            <DateLabel>
-              {selectedDate ? `For ${selectedDate}` : 'No date selected'}
-            </DateLabel>
+            <button
+              onClick={onClose}
+              className="self-end bg-transparent border-none text-2xl text-gray-500 cursor-pointer mb-2 hover:text-gray-700 transition-colors"
+            >
+              ✕
+            </button>
+            
+            <h2 className="text-lg font-semibold mb-2">Journal Entry</h2>
+            <p className="text-gray-500 text-sm mb-2">
+              For {selectedDate}
+            </p>
 
-            <TextArea
+            <textarea
               placeholder="How are you feeling today?"
               value={content}
               onChange={e => setContent(e.target.value)}
+              className="w-full min-h-[200px] border border-gray-300 rounded-md p-2 text-base bg-[#fdfaf5] resize-vertical outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
             />
+            
             {isAlarming && (
-              <p style={{ color: '#c62828', marginTop:'0.5rem' }}>
-                It seems like you might be in distress. If you need help, please reach out to a trusted friend or professional.
+              <p className="text-red-800 mt-2 text-sm">
+                ⚠️ It seems like you might be in distress. If you need help, please reach out to a trusted friend or professional.
               </p>
             )}
+            
             {error && (
-              <p style={{ color: 'red', marginTop: '0.5rem' }}>{error}</p>
+              <p className="text-red-600 mt-2 text-sm">{error}</p>
             )}
 
-            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-              <SaveButton
+            <div className="flex gap-4 mt-4">
+              <Button
                 onClick={handleSave}
                 disabled={loading || content.trim() === ''}
+                className="self-end"
               >
                 {loading ? 'Saving...' : 'Save Entry'}
-              </SaveButton>
-              <SaveButton
-                onClick={() => onOpenChange(false)}
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={onClose}
                 disabled={loading}
+                className="self-end"
               >
                 Cancel
-              </SaveButton>
+              </Button>
             </div>
-          </MotionDrawerPanel>
+          </motion.div>
         </>
       )}
     </AnimatePresence>
