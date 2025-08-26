@@ -1,11 +1,10 @@
-// Calendar.tsx
 'use client';
 
-import CalendarHeader from './CalendarHeader';
-import CalendarGrid from './CalendarGrid';
 import { useState, useEffect } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import { useJournal } from '@/contexts/JournalContext';
+import CalendarHeader from './CalendarHeader';
+import CalendarGrid from './CalendarGrid';
 
 export default function Calendar({
   onDateClick,
@@ -17,7 +16,6 @@ export default function Calendar({
 
   useEffect(() => {
     const month = currentDate.format('YYYY-MM');
-    console.log('Refreshing entries for month:', month);
     refreshMonth(month);
   }, [currentDate, refreshMonth]);
 

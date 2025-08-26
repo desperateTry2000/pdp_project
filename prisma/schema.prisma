@@ -10,11 +10,11 @@ datasource db {
 
 model User {
   id             String    @id @default(cuid())
-  name           String    @default("") // Default for existing users
-  email          String    @unique // Required for auth
+  name           String    @default("")
+  email          String    @unique
   emailVerified  DateTime?
   image          String?
-  passwordHash   String?   // Optional: null for OAuth users, required for credentials users
+  passwordHash   String?
   accounts       Account[]
   sessions       Session[]
   createdAt      DateTime  @default(now())
@@ -64,7 +64,7 @@ model User {
 
 model JournalEntry {
   id          String   @id @default(cuid())
-  date        String   @unique // ← add this
+  date        String   @unique
   content     String   @db.Text
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

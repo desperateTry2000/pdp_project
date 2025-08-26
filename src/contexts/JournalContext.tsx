@@ -82,7 +82,7 @@ export function JournalProvider({ children }: { children: ReactNode }) {
         }));
       }
     } catch {
-      // Silently fail - entries will be refreshed on next mount
+      // Entries will be refreshed on next mount
     }
   }, []);
 

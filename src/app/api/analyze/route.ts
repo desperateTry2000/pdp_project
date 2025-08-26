@@ -1,4 +1,3 @@
-// app/api/analyze/route.ts
 export const runtime = 'nodejs';
 import { NextResponse } from 'next/server';
 import { openai } from '@/lib/openai';

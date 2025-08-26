@@ -7,8 +7,6 @@ export function DemoWidget() {
   const handleAnalyze = () => {
     if (!input.trim()) return;
     
-    // For demo purposes, set a mock result
-    // In production, this would call the actual analyze API
     setResult({ score: 'Neutral', value: 50 });
   };
 

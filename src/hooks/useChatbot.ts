@@ -10,13 +10,21 @@ export function useChatbot() {
   const [isLoading, setIsLoading] = useState(false);
 
   const addSystemMessage = useCallback((content: string) => {
+    const isDuplicate = messages.some(msg => 
+      msg.role === 'assistant' && msg.content === content
+    );
+    
+    if (isDuplicate) {
+      return;
+    }
+    
     const systemMessage: ChatMessage = {
       role: 'assistant',
       content,
       timestamp: new Date()
     };
     setMessages(prev => [...prev, systemMessage]);
-  }, []);
+  }, [messages]);
 
   const sendMessage = useCallback(async (userMessage: string, context: ChatbotContext) => {
     const userMsg: ChatMessage = {

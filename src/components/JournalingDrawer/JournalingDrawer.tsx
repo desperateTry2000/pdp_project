@@ -24,7 +24,6 @@ export default function JournalingDrawer({
   const [showChatbot, setShowChatbot] = useState(false);
   const { addEntry, updateEntry, getEntry, clearEntry, entries } = useJournal();
 
-  // Get previous entries for context (last 5 entries excluding current date)
   const getPreviousEntries = () => {
     const allEntries = Object.values(entries);
     return allEntries
@@ -33,7 +32,6 @@ export default function JournalingDrawer({
       .slice(0, 5);
   };
 
-  // Load existing entry when drawer opens
   useEffect(() => {
     if (isOpen && selectedDate) {
       const existingEntry = getEntry(selectedDate);
@@ -125,7 +123,6 @@ export default function JournalingDrawer({
       });
       
       if (res.ok) {
-        // Remove from context
         clearEntry(selectedDate);
         onClose();
         setContent('');
