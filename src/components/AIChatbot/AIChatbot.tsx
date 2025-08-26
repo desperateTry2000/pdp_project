@@ -5,8 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, X, Bot, User } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { CrisisResponse } from '@/components/AIChatbot/CrisisResponse';
+import { useChatbot } from '@/hooks/useChatbot';
 import { ChatbotContext, buildInitialPrompt, buildAnalysisPrompt } from '@/lib/chatbot-context';
-import { useChatbot } from '../../hooks/useChatbot';
 
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -33,6 +33,7 @@ interface ChatbotProps {
 
 export default function AIChatbot({ isOpen, onClose, journalEntry, previousEntries }: ChatbotProps) {
   const [inputValue, setInputValue] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   const context: ChatbotContext = useMemo(() => ({
@@ -69,8 +70,14 @@ export default function AIChatbot({ isOpen, onClose, journalEntry, previousEntri
     
     const userMessage = inputValue.trim();
     setInputValue('');
+    setError(null);
     
-    await sendMessage(userMessage, context);
+    try {
+      await sendMessage(userMessage, context);
+    } catch (err) {
+      setError('Failed to send message. Please try again.');
+      console.error('Send message error:', err);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -107,13 +114,16 @@ export default function AIChatbot({ isOpen, onClose, journalEntry, previousEntri
             <div className="flex items-center space-x-2">
               <button
                 onClick={handleChatNow}
-                className="px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white text-sm rounded-lg transition-colors border border-white/30"
+                disabled={isLoading}
+                className="px-3 py-1.5 bg-white/20 hover:bg-white/30 disabled:bg-white/10 disabled:cursor-not-allowed text-white text-sm rounded-lg transition-colors border border-white/30"
+                aria-label="Start a general conversation"
               >
                 💬 Chat Now
               </button>
               <button
                 onClick={onClose}
                 className="text-white/80 hover:text-white transition-colors p-1"
+                aria-label="Close chatbot"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -122,6 +132,20 @@ export default function AIChatbot({ isOpen, onClose, journalEntry, previousEntri
 
           {context.safetyFlags && (
             <CrisisResponse level="CRITICAL" />
+          )}
+
+          {error && (
+            <div className="px-4 py-2 bg-red-50 dark:bg-red-900/20 border-b border-red-200 dark:border-red-700">
+              <div className="flex items-center space-x-2">
+                <span className="text-red-600 dark:text-red-400 text-sm">⚠️ {error}</span>
+                <button
+                  onClick={() => setError(null)}
+                  className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
           )}
 
           {context.currentEntry && context.currentEntry.length > 0 && (
@@ -135,7 +159,9 @@ export default function AIChatbot({ isOpen, onClose, journalEntry, previousEntri
                     const analysisMessage = buildAnalysisPrompt(context);
                     addSystemMessage(analysisMessage);
                   }}
-                  className="px-3 py-1.5 bg-primary-100 hover:bg-primary-200 dark:bg-primary-900/30 dark:hover:bg-primary-900/50 text-primary-700 dark:text-primary-300 text-sm rounded-lg transition-colors"
+                  disabled={isLoading}
+                  className="px-3 py-1.5 bg-primary-100 hover:bg-primary-200 disabled:bg-primary-50 disabled:cursor-not-allowed dark:bg-primary-900/30 dark:hover:bg-primary-900/50 text-primary-700 dark:text-primary-300 text-sm rounded-lg transition-colors"
+                  aria-label="Re-analyze journal entry"
                 >
                   🔍 Re-analyze
                 </button>
@@ -184,13 +210,14 @@ export default function AIChatbot({ isOpen, onClose, journalEntry, previousEntri
                 className="flex justify-start"
               >
                 <div className="bg-white dark:bg-dark-600 px-4 py-3 rounded-2xl shadow-md border border-gray-200 dark:border-dark-500">
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-3">
                     <Bot className="w-4 h-4 text-primary-600 dark:text-primary-400" />
                     <div className="flex space-x-1">
                       <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                       <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                       <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                     </div>
+                    <span className="text-sm text-gray-600 dark:text-dark-400 ml-2">AI is thinking...</span>
                   </div>
                 </div>
               </motion.div>

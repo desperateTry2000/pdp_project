@@ -5,7 +5,6 @@ export type CrisisLevel = 'SAFE' | 'CONCERNING' | 'CRITICAL';
 export function detectCrisisIndicators(content: string): CrisisLevel {
   const lowerContent = content.toLowerCase();
   
-  // Check for critical crisis indicators
   const hasCriticalKeywords = CRISIS_KEYWORDS.some(keyword => 
     lowerContent.includes(keyword)
   );
@@ -14,7 +13,6 @@ export function detectCrisisIndicators(content: string): CrisisLevel {
     return 'CRITICAL';
   }
   
-  // Check for concerning patterns
   const concerningPatterns = [
     /i (feel|am) (so|very|extremely) (sad|depressed|hopeless)/i,
     /(don't|can't) (see|find) (any|a) (point|reason|hope)/i,
@@ -33,7 +31,7 @@ export function detectCrisisIndicators(content: string): CrisisLevel {
   return 'SAFE';
 }
 
-export function getCrisisResponse(level: CrisisLevel, content: string): string | null {
+export function getCrisisResponse(level: CrisisLevel): string | null {
   if (level === 'CRITICAL') {
     return CRISIS_RESPONSE;
   }
