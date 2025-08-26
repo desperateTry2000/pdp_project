@@ -54,7 +54,6 @@ export const authOptions: NextAuthOptions = {
             return null;
           }
           
-          // Check if this is an OAuth-only user (no password)
           if (!user.passwordHash) {
             return null;
           }

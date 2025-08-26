@@ -18,7 +18,6 @@ export function buildContextualPrompt(
 ): string {
   let prompt = `USER'S LATEST MESSAGE: "${userMessage}"\n\n`;
   
-  // Add current entry context if available (without copying the text)
   if (context.currentEntry) {
     prompt += `CURRENT JOURNAL ENTRY:
 - Has unsaved content: ${context.currentEntry.length > 0 ? 'Yes' : 'No'}
@@ -26,7 +25,6 @@ export function buildContextualPrompt(
 - Safety Concerns: ${context.safetyFlags ? 'YES - Handle with extra care' : 'None detected'}\n\n`;
   }
   
-  // Add previous entries context (without copying content)
   if (context.previousEntries && context.previousEntries.length > 0) {
     prompt += `PREVIOUS ENTRIES CONTEXT:
 - Total previous entries: ${context.previousEntries.length}
@@ -35,7 +33,6 @@ export function buildContextualPrompt(
     ).join(', ')}\n\n`;
   }
   
-  // Add conversation history for context
   if (conversationHistory.length > 0) {
     prompt += `CONVERSATION HISTORY (last 3 messages):
 ${conversationHistory.slice(-3).map(msg => `${msg.role}: ${msg.content}`).join('\n')}\n\n`;
