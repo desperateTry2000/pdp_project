@@ -26,9 +26,8 @@ export function useChatbot() {
     };
     setMessages(prev => [...prev, userMsg]);
 
-    // Check for crisis indicators in user messages
     const crisisLevel = detectCrisisIndicators(userMessage);
-    const crisisResponse = getCrisisResponse(crisisLevel, userMessage);
+    const crisisResponse = getCrisisResponse(crisisLevel);
 
     if (crisisResponse) {
       const crisisMsg: ChatMessage = {
@@ -37,8 +36,7 @@ export function useChatbot() {
         timestamp: new Date()
       };
       setMessages(prev => [...prev, crisisMsg]);
-          // Check for crisis indicators in user message
-
+      
       if (crisisLevel === 'CRITICAL') {
         return;
       }
