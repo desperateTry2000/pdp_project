@@ -5,11 +5,7 @@ import CalendarHeader from './CalendarHeader';
 import CalendarGrid from './CalendarGrid';
 import { useState, useEffect } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
-
-type JournalEntryPayload = {
-  date: string;
-  isAlarming: boolean;
-};
+import { useJournal } from '@/contexts/JournalContext';
 
 export default function Calendar({
   onDateClick,
@@ -17,24 +13,13 @@ export default function Calendar({
   onDateClick: (dateStr: string) => void;
 }) {
   const [currentDate, setCurrentDate] = useState<Dayjs>(dayjs());
-  const [entriesMap, setEntriesMap] = useState<Record<string, boolean>>({});
+  const { refreshMonth, entries } = useJournal();
 
   useEffect(() => {
     const month = currentDate.format('YYYY-MM');
-    fetch(`/api/journal?month=${month}`)
-      .then((res) => res.json())
-      .then((data: JournalEntryPayload[]) => {
-        const map: Record<string, boolean> = {};
-        data.forEach((entry) => {
-          map[entry.date] = entry.isAlarming;
-        });
-        setEntriesMap(map);
-      })
-      .catch((err) => {
-        console.error('Failed to load journal entries:', err);
-        setEntriesMap({});
-      });
-  }, [currentDate]);
+    console.log('Refreshing entries for month:', month);
+    refreshMonth(month);
+  }, [currentDate, refreshMonth]);
 
   return (
     <div>
@@ -45,7 +30,7 @@ export default function Calendar({
       <CalendarGrid
         currentDate={currentDate}
         onDateClick={onDateClick}
-        entriesMap={entriesMap}       
+        entriesMap={entries}       
       />
     </div>
   );

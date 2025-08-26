@@ -17,10 +17,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Missing content' }, { status: 400 });
   }
 
+  console.log('Analyzing content:', content.substring(0, 100) + '...');
+
   try {
     const mod = await openai.moderations.create({ input: content });
     const { flagged, categories } = mod.results[0];
+    
+    console.log('OpenAI moderation result:', { flagged, categories });
+    
     const isAlarming = categories['self-harm'] || flagged;
+    
+    console.log('Final isAlarming result:', isAlarming);
+    
     return NextResponse.json({ isAlarming, categories });
   } catch (err) {
     console.error('Moderation API or runtime error in /api/analyze:', err);

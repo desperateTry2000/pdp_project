@@ -1,5 +1,5 @@
 import { PrismaClient } from '@/generated/prisma';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
@@ -16,7 +16,7 @@ export async function GET(request: Request) {
   try {
     const entries = await prisma.journalEntry.findMany({
       where: { date: { startsWith: month } },
-      select: { date: true, isAlarming: true },
+      select: { date: true, isAlarming: true, content: true },
     });
     return NextResponse.json(entries);
   } catch (err) {
@@ -59,6 +59,31 @@ export async function POST(request: Request) {
     console.error('Prisma upsert error:', err);
     return NextResponse.json(
       { error: 'Failed to save entry' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: Request) {
+  const url = new URL(request.url);
+  const date = url.searchParams.get('date');
+  
+  if (!date) {
+    return NextResponse.json(
+      { error: 'Missing `date` query param' },
+      { status: 400 }
+    );
+  }
+
+  try {
+    await prisma.journalEntry.delete({
+      where: { date },
+    });
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error('Prisma delete error:', err);
+    return NextResponse.json(
+      { error: 'Failed to delete entry' },
       { status: 500 }
     );
   }
