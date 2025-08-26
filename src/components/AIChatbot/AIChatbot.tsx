@@ -74,9 +74,8 @@ export default function AIChatbot({ isOpen, onClose, journalEntry, previousEntri
     
     try {
       await sendMessage(userMessage, context);
-    } catch (err) {
+    } catch {
       setError('Failed to send message. Please try again.');
-      console.error('Send message error:', err);
     }
   };
 

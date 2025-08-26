@@ -47,6 +47,10 @@ export function useChatbot() {
     try {
       const contextualPrompt = buildContextualPrompt(userMessage, context, messages);
       
+      if (!contextualPrompt) {
+        throw new Error('Failed to build contextual prompt');
+      }
+      
       const response = await fetch('/api/chatbot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -71,9 +75,7 @@ export function useChatbot() {
       };
 
       setMessages(prev => [...prev, assistantMessage]);
-    } catch (error) {
-      console.error('Chatbot error:', error);
-      
+    } catch {
       const errorMessage: ChatMessage = {
         role: 'assistant',
         content: "I'm having trouble connecting right now. Please try again in a moment, or if you need immediate support, please reach out to a mental health professional.",

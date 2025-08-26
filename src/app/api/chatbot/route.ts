@@ -34,8 +34,6 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Chatbot API error:', error);
-    
     // Don't expose internal errors to users
     return NextResponse.json(
       { 

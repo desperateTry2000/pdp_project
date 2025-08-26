@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { MessageCircle, Calendar as CalendarIcon } from 'lucide-react';
 import BaseCalendar from '@/components/BaseCalendar/Calendar';
 import JournalingDrawer from '@/components/JournalingDrawer/JournalingDrawer';
 import AIChatbot from '@/components/AIChatbot/AIChatbot';
+import MessageIcon from '@/components/icons/MessageIcon';
+import CalendarIcon from '@/components/icons/CalendarIcon';
 
 export default function CalendarPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -41,7 +42,7 @@ export default function CalendarPage() {
               onClick={handleStartChat}
               className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
             >
-              <MessageCircle className="w-5 h-5" />
+              <MessageIcon className="w-5 h-5" />
               <span>Start Chatting</span>
             </button>
             
