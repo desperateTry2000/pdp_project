@@ -31,10 +31,6 @@ export default function CalendarGrid({
         const isSelected = dateStr === selectedDate;
         const hasEntry = !!entry;
 
-        if (isAlarming) {
-          console.log('Alarming day found:', dateStr, 'isAlarming:', isAlarming);
-        }
-
         const baseClasses = "relative min-h-[9rem] flex items-center justify-center rounded-lg text-center m-0.5 cursor-pointer transition-all duration-200 hover:transform hover:-translate-y-0.5 hover:scale-105 hover:shadow-lg";
         
         let bgClasses = "";

@@ -8,7 +8,6 @@ export async function POST(request: NextRequest) {
   try {
     const { name, email, password } = await request.json();
 
-    // Basic validation
     if (!name || !email || !password) {
       return NextResponse.json(
         { error: 'Name, email, and password are required' },
@@ -23,7 +22,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: { email: email.toLowerCase().trim() }
     });
@@ -35,10 +33,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Hash password
     const hashedPassword = await hash(password, 12);
 
-    // Create user
     const user = await prisma.user.create({
       data: {
         name: name.trim(),
@@ -47,7 +43,6 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Return success (don't return the password hash)
     return NextResponse.json(
       { 
         message: 'User created successfully',
@@ -61,7 +56,6 @@ export async function POST(request: NextRequest) {
     );
 
   } catch (error) {
-    console.error('Signup error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

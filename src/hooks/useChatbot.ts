@@ -10,13 +10,21 @@ export function useChatbot() {
   const [isLoading, setIsLoading] = useState(false);
 
   const addSystemMessage = useCallback((content: string) => {
+    const isDuplicate = messages.some(msg => 
+      msg.role === 'assistant' && msg.content === content
+    );
+    
+    if (isDuplicate) {
+      return;
+    }
+    
     const systemMessage: ChatMessage = {
       role: 'assistant',
       content,
       timestamp: new Date()
     };
     setMessages(prev => [...prev, systemMessage]);
-  }, []);
+  }, [messages]);
 
   const sendMessage = useCallback(async (userMessage: string, context: ChatbotContext) => {
     const userMsg: ChatMessage = {
@@ -47,6 +55,10 @@ export function useChatbot() {
     try {
       const contextualPrompt = buildContextualPrompt(userMessage, context, messages);
       
+      if (!contextualPrompt) {
+        throw new Error('Failed to build contextual prompt');
+      }
+      
       const response = await fetch('/api/chatbot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -71,9 +83,7 @@ export function useChatbot() {
       };
 
       setMessages(prev => [...prev, assistantMessage]);
-    } catch (error) {
-      console.error('Chatbot error:', error);
-      
+    } catch {
       const errorMessage: ChatMessage = {
         role: 'assistant',
         content: "I'm having trouble connecting right now. Please try again in a moment, or if you need immediate support, please reach out to a mental health professional.",

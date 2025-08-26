@@ -81,8 +81,8 @@ export function JournalProvider({ children }: { children: ReactNode }) {
           ...newEntries
         }));
       }
-    } catch (error) {
-      console.error('Failed to refresh month entries:', error);
+    } catch {
+      // Entries will be refreshed on next mount
     }
   }, []);
 

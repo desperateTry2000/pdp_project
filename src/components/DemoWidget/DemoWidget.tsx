@@ -5,7 +5,8 @@ export function DemoWidget() {
   const [result, setResult] = useState<{ score: string; value: number } | null>(null);
 
   const handleAnalyze = () => {
-    // TODO: call /api/analyze and set real result
+    if (!input.trim()) return;
+    
     setResult({ score: 'Neutral', value: 50 });
   };
 

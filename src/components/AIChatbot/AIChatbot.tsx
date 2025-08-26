@@ -35,6 +35,7 @@ export default function AIChatbot({ isOpen, onClose, journalEntry, previousEntri
   const [inputValue, setInputValue] = useState('');
   const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const initializedRef = useRef(false);
   
   const context: ChatbotContext = useMemo(() => ({
     currentEntry: journalEntry?.content,
@@ -43,14 +44,18 @@ export default function AIChatbot({ isOpen, onClose, journalEntry, previousEntri
     userHistory: []
   }), [journalEntry?.content, previousEntries, journalEntry?.analysis?.isAlarming]);
 
-  const { messages, sendMessage, isLoading, addSystemMessage } = useChatbot();
+  const { messages, sendMessage, isLoading, addSystemMessage, clearMessages } = useChatbot();
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   useEffect(() => {
-    if (isOpen && messages.length === 0) {
+    if (isOpen && !initializedRef.current) {
+      initializedRef.current = true;
+      
+      clearMessages();
+      
       if (context.currentEntry && context.currentEntry.length > 0) {
         const analysisMessage = buildAnalysisPrompt(context);
         addSystemMessage(analysisMessage);
@@ -59,9 +64,17 @@ export default function AIChatbot({ isOpen, onClose, journalEntry, previousEntri
         addSystemMessage(initialMessage);
       }
     }
-  }, [isOpen, messages.length, context, addSystemMessage]);
+  }, [isOpen, context, addSystemMessage, clearMessages]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      initializedRef.current = false;
+      clearMessages();
+    }
+  }, [isOpen, clearMessages]);
 
   const handleChatNow = () => {
+    clearMessages();
     addSystemMessage("Great! I'm here for a general conversation about your mental health and well-being. What's on your mind today?");
   };
 
@@ -74,9 +87,8 @@ export default function AIChatbot({ isOpen, onClose, journalEntry, previousEntri
     
     try {
       await sendMessage(userMessage, context);
-    } catch (err) {
+    } catch {
       setError('Failed to send message. Please try again.');
-      console.error('Send message error:', err);
     }
   };
 
@@ -156,6 +168,7 @@ export default function AIChatbot({ isOpen, onClose, journalEntry, previousEntri
                 </span>
                 <button
                   onClick={() => {
+                    clearMessages();
                     const analysisMessage = buildAnalysisPrompt(context);
                     addSystemMessage(analysisMessage);
                   }}

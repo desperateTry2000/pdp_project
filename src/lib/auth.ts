@@ -45,38 +45,28 @@ export const authOptions: NextAuthOptions = {
           const password = credentials?.password;
           
           if (!email || !password) {
-            console.log('Missing credentials');
             return null;
           }
-
-          console.log('Attempting to find user with email:', email);
           
           const user = await prisma.user.findUnique({ where: { email } });
           
           if (!user) {
-            console.log('User not found');
             return null;
           }
           
-          // Check if this is an OAuth-only user (no password)
           if (!user.passwordHash) {
-            console.log('User found but no password hash - OAuth user trying to use credentials');
             return null;
           }
 
-          console.log('Comparing passwords...');
           const isValid = await compare(password, user.passwordHash);
           
           if (!isValid) {
-            console.log('Password invalid');
             return null;
           }
 
-          console.log('Authentication successful for user:', user.id);
           return user;
         } catch (error) {
-          console.error('Error in authorize function:', error);
-          throw error; // This will cause the 500 error, but we'll see the actual error in logs
+          throw error;
         }
       },
     }),

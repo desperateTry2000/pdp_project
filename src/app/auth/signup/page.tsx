@@ -19,33 +19,25 @@ export default function SignUp() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    // Name validation
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
-    } else if (formData.name.trim().length < 2) {
+    if (formData.name.trim().length < 2) {
       newErrors.name = 'Name must be at least 2 characters';
     }
 
-    // Email validation
+    if (formData.name.trim().length > 50) {
+      newErrors.name = 'Name must be less than 50 characters';
+    }
+
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email address';
     }
 
-    // Password validation
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 8) {
+    if (formData.password.length < 8) {
       newErrors.password = 'Password must be at least 8 characters';
-    } else if (!/(?=.*[A-Za-z])(?=.*\d)/.test(formData.password)) {
-      newErrors.password = 'Password must contain at least one letter and one number';
     }
 
-    // Confirm password validation
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your password';
-    } else if (formData.password !== formData.confirmPassword) {
+    if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
 
@@ -84,8 +76,7 @@ export default function SignUp() {
         const errorData = await response.json();
         setErrors({ submit: errorData.error || 'Signup failed' });
       }
-    } catch (error) {
-      console.error('Signup error:', error);
+    } catch {
       setErrors({ submit: 'An error occurred during signup' });
     } finally {
       setIsLoading(false);
@@ -94,7 +85,6 @@ export default function SignUp() {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    // Clear field-specific error when user starts typing
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }

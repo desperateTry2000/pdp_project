@@ -24,7 +24,6 @@ export default function JournalingDrawer({
   const [showChatbot, setShowChatbot] = useState(false);
   const { addEntry, updateEntry, getEntry, clearEntry, entries } = useJournal();
 
-  // Get previous entries for context (last 5 entries excluding current date)
   const getPreviousEntries = () => {
     const allEntries = Object.values(entries);
     return allEntries
@@ -33,7 +32,6 @@ export default function JournalingDrawer({
       .slice(0, 5);
   };
 
-  // Load existing entry when drawer opens
   useEffect(() => {
     if (isOpen && selectedDate) {
       const existingEntry = getEntry(selectedDate);
@@ -51,17 +49,15 @@ export default function JournalingDrawer({
     const timeout = setTimeout(async () => {
       if (!content.trim()) return setIsAlarming(false);
       try {
-        console.log('Analyzing content:', content.substring(0, 50) + '...');
         const res = await fetch('/api/analyze', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ content }),
         });
         const data = await res.json();
-        console.log('Analysis response:', data);
         setIsAlarming(data.isAlarming);
-      } catch (error) {
-        console.error('Analysis error:', error);
+      } catch {
+        setError('Failed to analyze content');
       }
     }, 500);
 
@@ -72,6 +68,7 @@ export default function JournalingDrawer({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
+    
     if (isOpen) window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
@@ -82,8 +79,6 @@ export default function JournalingDrawer({
     setLoading(true);
     setError(null);
     
-    console.log('Saving entry:', { date: selectedDate, content: content.substring(0, 50) + '...', isAlarming });
-    
     try {
       const res = await fetch('/api/journal', {
         method: 'POST',
@@ -93,11 +88,9 @@ export default function JournalingDrawer({
 
       if (!res.ok) {
         const err = await res.json();
-        console.error('Save error:', err);
         setError(err.error || 'Unknown error');
       } else {
         const savedEntry = await res.json();
-        console.log('Entry saved successfully:', savedEntry);
         
         // Update the context immediately for real-time calendar updates
         if (savedEntry.isAlarming) {
@@ -113,8 +106,7 @@ export default function JournalingDrawer({
         onClose();
         setContent('');
       }
-    } catch (e) {
-      console.error('Save error:', e);
+    } catch {
       setError('Failed to save entry');
     } finally {
       setLoading(false);
@@ -131,13 +123,11 @@ export default function JournalingDrawer({
       });
       
       if (res.ok) {
-        // Remove from context
         clearEntry(selectedDate);
         onClose();
         setContent('');
       }
-    } catch (e) {
-      console.error('Delete error:', e);
+    } catch {
       setError('Failed to delete entry');
     } finally {
       setLoading(false);

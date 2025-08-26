@@ -12,7 +12,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Ensure we don't exceed token limits
     const maxMessages = 10;
     const limitedMessages = messages.slice(-maxMessages);
 
@@ -34,9 +33,6 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Chatbot API error:', error);
-    
-    // Don't expose internal errors to users
     return NextResponse.json(
       { 
         error: 'I\'m having trouble connecting right now. Please try again in a moment.',

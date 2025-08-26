@@ -35,9 +35,8 @@ export default function SignIn() {
       } else {
         router.push('/calendar');
       }
-    } catch (error) {
-      console.error('Signin error:', error);
-      setError('An error occurred during signin. Please check the console for details.');
+    } catch {
+      setError('An error occurred during signin. Please try again.');
     } finally {
       setIsLoading(false);
     }
