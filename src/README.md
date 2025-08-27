@@ -1,109 +1,112 @@
-# Source Code Organization
+# Mental Health Journal - Next.js PDP Application
 
-## Directory Structure
+## Project Description
+
+A comprehensive mental health journaling application built with Next.js 15, featuring AI-powered content analysis, crisis detection, and a supportive chatbot companion. The app in theory wpuld provide a safe space for users to document their thoughts and feelings while receiving intelligent insights and support...
+
+## Key Features
+
+- **Secure Authentication**: NextAuth.js with Google OAuth and email/password support
+- **AI-Powered Analysis**: OpenAI integration for content moderation and safety detection
+- **Mental Health Chatbot**: GPT-4 powered companion for emotional support and guidance
+- **Real-time Calendar**: Interactive journaling interface with instant updates
+- **Crisis Detection**: Automated identification of concerning content with appropriate resources
+- **Responsive Design**: Tailwind CSS with dark mode support and smooth animations
+
+## Tech Stack
+
+- **Frontend Framework**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS v3, Framer Motion, clsx, tailwind-merge
+- **Authentication**: NextAuth.js, bcryptjs, @next-auth/prisma-adapter
+- **Database**: PostgreSQL with Prisma ORM (@prisma/client, prisma)
+- **AI Services**: OpenAI GPT-4, Content Moderation API
+- **State Management**: React Context API, Custom Hooks
+- **Date Handling**: dayjs for calendar operations
+- **Icons**: Lucide React for iconography
+- **Development Tools**: ESLint, Prettier, PostCSS, Autoprefixer
+
+## Project Structure
 
 ```
 src/
 ├── app/                    # Next.js App Router
-│   ├── api/               # API Routes
-│   │   ├── auth/          # Authentication endpoints
-│   │   ├── journal/       # Journal CRUD operations
-│   │   ├── analyze/       # Content analysis
-│   │   ├── chatbot/       # AI chatbot interactions
-│   │   └── health/        # Health checks
+│   ├── api/               # API Routes (auth, journal, analyze, chatbot)
 │   ├── auth/              # Authentication pages
-│   ├── calendar/          # Calendar page
-│   └── layout.tsx         # Root layout
+│   ├── calendar/          # Main calendar interface
+│   └── layout.tsx         # Root layout with providers
 ├── components/             # React Components
 │   ├── ui/                # Reusable UI components
 │   ├── BaseCalendar/      # Calendar functionality
-│   ├── AIChatbot/         # Chatbot components
+│   ├── AIChatbot/         # AI chatbot interface
 │   ├── JournalingDrawer/  # Journal entry interface
-│   ├── icons/             # Custom SVG icons
-│   └── AuthHeader.tsx     # Authentication header
+│   └── icons/             # Custom SVG icons
 ├── hooks/                  # Custom React Hooks
-│   ├── useTheme.ts        # Theme management
-│   ├── useChatbot.ts      # Chatbot state management
-│   └── useJournal.ts      # Journal context hook
 ├── contexts/               # React Context Providers
-│   └── JournalContext.tsx # Journal state management
 ├── lib/                    # Utility Libraries
-│   ├── auth.ts            # NextAuth configuration
-│   ├── openai.ts          # OpenAI client
-│   ├── utils.ts           # General utilities
-│   ├── chatbot-prompts.ts # AI prompt templates
-│   ├── chatbot-context.ts # Context building logic
-│   └── crisis-detection.ts # Crisis detection logic
 ├── services/               # Business Logic Services
-│   ├── authService.ts     # Authentication logic
-│   ├── journalService.ts  # Journal operations
-│   ├── analysisService.ts # Content analysis
-│   └── chatbotService.ts  # AI interactions
-├── types/                  # TypeScript Type Definitions
-│   └── index.ts           # Centralized types
-├── constants/              # Application Constants
-│   └── index.ts           # Centralized constants
-├── generated/              # Generated files (Prisma)
-├── lotties/               # Animation files
-└── textures/              # Texture assets
+├── types/                  # TypeScript Definitions
+└── constants/              # Application Constants
 ```
 
-## Organization Principles
+## How to Start
 
-### 1. Separation of Concerns
-- **Components**: Pure UI components with minimal business logic
-- **Services**: Business logic and external API interactions
-- **Hooks**: State management and side effects
-- **Types**: Centralized TypeScript definitions
-- **Constants**: Application configuration and constants
+1. **Install Dependencies**: `npm install`
+2. **Environment Setup**: Configure `.env` with required API keys
+3. **Database Setup**: Run `npx prisma db push` to sync schema
+4. **Development**: `npm run dev` (runs on port 3069)
 
-### 2. Feature-Based Organization
-- Related functionality is grouped together
-- Each feature has its own directory when complex
-- Shared utilities are in `lib/` and `services/`
+## Environment Variables
 
-### 3. Import Path Consistency
-- All imports use `@/` alias for absolute paths
-- Clear import hierarchy: `@/components/`, `@/services/`, `@/types/`
+```env
+# Database
+DATABASE_URL="postgresql://..."
 
-### 4. Scalability
-- Easy to add new features
-- Clear separation between UI and business logic
-- Centralized configuration and types
+# Authentication
+NEXTAUTH_SECRET="your-secret"
+NEXTAUTH_URL="http://localhost:3069"
 
-## Best Practices
+# Google OAuth
+GOOGLE_CLIENT_ID="your-google-client-id"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
 
-### Components
-- Keep components focused and single-purpose
-- Use TypeScript interfaces for props
-- Implement proper error boundaries
+# OpenAI
+OPENAI_API_KEY="your-openai-api-key"
+```
 
-### Services
-- Handle all external API calls
-- Implement proper error handling
-- Return consistent response formats
+## Core Architecture
 
-### Types
-- Define interfaces in `types/index.ts`
-- Use strict typing throughout the application
-- Avoid `any` types
+### Authentication Flow
+- NextAuth.js handles both OAuth and credentials authentication
+- Prisma adapter manages user sessions and database persistence
+- Secure password hashing with bcryptjs
 
-### Constants
-- Centralize all configuration values
-- Use `as const` for immutable constants
-- Group related constants together
+### AI Integration
+- Content analysis using OpenAI's moderation API
+- Crisis detection with automated response systems
+- GPT-4 powered chatbot for emotional support
 
-## Adding New Features
+### State Management
+- React Context for global journal entry state
+- Custom hooks for chatbot and theme management
+- Real-time updates without page refreshes
 
-1. **Create types** in `types/index.ts`
-2. **Add constants** in `constants/index.ts`
-3. **Implement services** in `services/`
-4. **Create components** in appropriate `components/` subdirectory
-5. **Add hooks** in `hooks/` if needed
-6. **Update this README** with new structure
+## Security Features
 
-## Migration Notes
+- **Content and Chat Moderation**: AI-powered safety detection
+- **Crisis Detection and Intervention**: Automated crisis response with emergency resources
+- **Data Privacy**: Secure user data handling and storage(in theory)
+- **Input Validation**: Comprehensive form validation and sanitization(no zod for now)
 
-- **DemoWidget**: Consider removing from production
-- **Loose files**: Move `AuthHeader.tsx` to appropriate auth directory
-- **Asset folders**: Consider moving `lotties/` and `textures/` to `public/`
+## Performance Optimizations
+
+- **Code Splitting**: Automatic Next.js code splitting
+- **Image Optimization**: Next.js built-in image optimization
+<- **Bundle Optimization**: keeping dependencies clean
+>
+
+## Development Guidelines
+
+- **TypeScript**: Strict typing throughout the app
+- **Component Structure**: Single responsibility principle
+- **Error Handling**: Comprehensive error boundaries and user feedback (could be more centralised)
+- **Accessibility**: ARIA labels and keyboard navigation support(in some palces)
